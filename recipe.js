@@ -61,5 +61,11 @@ app.post("/login", async (req, res) => {
     res.status(500).send(err);
   }
 });
+app.post("/recipes", (req, res) => {
+  console.log("Received:", req.body);
+  res.json({ message: "Recipe received!" });
+});
+
+
 
 
