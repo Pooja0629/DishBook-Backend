@@ -66,6 +66,18 @@ app.post("/recipes", (req, res) => {
   res.json({ message: "Recipe received!" });
 });
 
+app.post("/auth/signup", async (req, res) => {
+  const { username, password } = req.body;
+  res.json({ message: "User created" });
+});
+
+app.post("/auth/login", async (req, res) => {
+  const { username, password } = req.body;
+  res.json({ token: "JWT_TOKEN_HERE" });
+});
+
+
+
 
 
 
