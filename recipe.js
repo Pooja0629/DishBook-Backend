@@ -6,11 +6,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// ✅ MongoDB connection
 const mongoURL = "mongodb+srv://ReceipeUser:Pooja2906@receipe.hnkhrxa.mongodb.net/recipesDB?retryWrites=true&w=majority";
 mongoose.connect(mongoURL)
-  .then(() => console.log(" MongoDB connected"))
-  .catch(err => console.log("MongoDB error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("MongoDB error:", err));
 
+// ✅ Schemas & Models
 const recipeSchema = new mongoose.Schema({
   name: String,
   ingredients: [String],
@@ -19,7 +21,6 @@ const recipeSchema = new mongoose.Schema({
 });
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
-
 const userSchema = new mongoose.Schema({
   username: String,
   email: String,
@@ -27,6 +28,10 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", userSchema);
 
+// ✅ Routes
+app.get("/", (req, res) => {
+  res.send("Backend is running ✅");
+});
 
 app.post("/signup", async (req, res) => {
   try {
@@ -46,7 +51,6 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -61,35 +65,25 @@ app.post("/login", async (req, res) => {
     res.status(500).send(err);
   }
 });
+
 app.post("/recipes", (req, res) => {
   console.log("Received:", req.body);
   res.json({ message: "Recipe received!" });
 });
 
-app.post("/auth/signup", async (req, res) => {
+// Dummy Auth Routes
+app.post("/auth/signup", (req, res) => {
   const { username, password } = req.body;
   res.json({ message: "User created" });
 });
 
-app.post("/auth/login", async (req, res) => {
+app.post("/auth/login", (req, res) => {
   const { username, password } = req.body;
   res.json({ token: "JWT_TOKEN_HERE" });
 });
-const PORT = process.env.PORT || 5000;
 
+// ✅ Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-app.get("/", (req, res) => {
-  res.send("Backend is running ✅");
-});
-
-
-
-
-
-
-
-
-
-
