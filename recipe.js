@@ -75,6 +75,13 @@ app.post("/auth/login", async (req, res) => {
   const { username, password } = req.body;
   res.json({ token: "JWT_TOKEN_HERE" });
 });
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
 
 
 
