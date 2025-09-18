@@ -17,7 +17,8 @@ const recipeSchema = new mongoose.Schema({
   name: String,
   ingredients: [String],
   steps: String,
-  category: String
+  category: String,
+  userEmail: String  // Link recipe to user
 });
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
   res.send("Backend is running ✅");
 });
 
+// -------- SIGNUP --------
 app.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -51,6 +53,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// -------- LOGIN --------
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -66,20 +69,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/recipes", (req, res) => {
-  console.log("Received:", req.body);
-  res.json({ message: "Recipe received!" });
+// -------- ADD RECIPE --------
+app.post("/recipes", async (req, res) => {
+  try {
+    const { name, ingredients, steps, category, userEmail } = req.body;
+
+    if (!userEmail) {
+      return res.status(400).json({ message: "User email required to save recipe" });
+    }
+
+    const recipe = new Recipe({ name, ingredients, steps, category, userEmail });
+    await recipe.save();
+
+    res.json({ message: "Recipe added successfully", recipe });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-// Dummy Auth Routes
-app.post("/auth/signup", (req, res) => {
-  const { username, password } = req.body;
-  res.json({ message: "User created" });
-});
-
-app.post("/auth/login", (req, res) => {
-  const { username, password } = req.body;
-  res.json({ token: "JWT_TOKEN_HERE" });
+// -------- GET USER-SPECIFIC RECIPES --------
+app.get("/recipes/:email", async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ userEmail: req.params.email });
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // ✅ Start server
